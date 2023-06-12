@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShopGroup;
+use App\Models\Str;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Filesystem\Filesystem;
 
 class ShopGroupController extends Controller
 {
@@ -69,57 +71,58 @@ class ShopGroupController extends Controller
             $shopGroup = new ShopGroup();
         }
 
-        if (!empty($request->path)) {
+        //$request->validate([
+            // 'name' => ['required', 'string', 'max:255'],
+            // 'seo_title' => ['required', 'string', 'max:255'],
+            // 'seo_keywords' => ['required', 'string', 'max:255'],
+            // 'path' => ['required', 'string', 'max:255'],
+        //]);
 
-            //$request->validate([
-                // 'name' => ['required', 'string', 'max:255'],
-                // 'seo_title' => ['required', 'string', 'max:255'],
-                // 'seo_keywords' => ['required', 'string', 'max:255'],
-                // 'path' => ['required', 'string', 'max:255'],
-            //]);
-    
-            $shopGroup->name = $request->name;
-            $shopGroup->description = $request->description;
-            $shopGroup->active = $request->active == 'on' ? 1 : 0;
-            $shopGroup->parent_id = $request->parent_id ?? 0;
-            $shopGroup->sorting = $request->sorting ?? 0;
-            $shopGroup->path = $request->path;
-            $shopGroup->seo_title = $request->seo_title;
-            $shopGroup->seo_description = $request->seo_description;
-            $shopGroup->seo_keywords = $request->seo_keywords;
-    
+        $shopGroup->name = $request->name;
+        $shopGroup->description = $request->description;
+        $shopGroup->active = $request->active == 'on' ? 1 : 0;
+        $shopGroup->parent_id = $request->parent_id ?? 0;
+        $shopGroup->sorting = $request->sorting ?? 0;
+        $shopGroup->path = !empty(trim($request->path)) ? $request->path : Str::transliteration($request->name);
+        $shopGroup->seo_title = $request->seo_title;
+        $shopGroup->seo_description = $request->seo_description;
+        $shopGroup->seo_keywords = $request->seo_keywords;
+
+        $shopGroup->save();
+
+        $Filesystem = new Filesystem();
+
+        if (!file_exists('../storage/app' . $shopGroup->path())) {
+            $Filesystem->makeDirectory('../storage/app' . $shopGroup->path(), 0755, true);
+        }
+
+        $bFile = FALSE;
+        if ($request->hasFile("image_large")) {
+            $bFile = TRUE;
+            $sFilename = 'image_large.' . $request->file('image_large')->getClientOriginalExtension();
+            $request->file('image_large')->storeAs(Shop::$store_path . "group_" . $shopGroup->id, $sFilename);
+            $shopGroup->image_large = $sFilename;
+        }
+
+        if ($request->hasFile("image_small")) {
+            $bFile = TRUE;
+            $sFilename = 'image_small.' . $request->file('image_small')->getClientOriginalExtension();
+            $request->file('image_small')->storeAs(Shop::$store_path . "group_" . $shopGroup->id, $sFilename);
+            $shopGroup->image_small = $sFilename;
+        }
+
+        if ($bFile) {
             $shopGroup->save();
-    
-            $bFile = FALSE;
-            if ($request->hasFile("image_large")) {
-                $bFile = TRUE;
-                $sFilename = 'image_large.' . $request->file('image_large')->getClientOriginalExtension();
-                $request->file('image_large')->storeAs(Shop::$store_path . "group_" . $shopGroup->id, $sFilename);
-                $shopGroup->image_large = $sFilename;
-            }
-    
-            if ($request->hasFile("image_small")) {
-                $bFile = TRUE;
-                $sFilename = 'image_small.' . $request->file('image_small')->getClientOriginalExtension();
-                $request->file('image_small')->storeAs(Shop::$store_path . "group_" . $shopGroup->id, $sFilename);
-                $shopGroup->image_small = $sFilename;
-            }
-    
-            if ($bFile) {
-                $shopGroup->save();
-            }
-    
-            $message = "Группа была успешно сохранена!";
-    
-            if (Arr::get($_REQUEST, 'apply') > 0) {
-                return redirect()->to(ShopController::$path . ($shopGroup->parent_id > 0 ? '?parent_id=' . $shopGroup->parent_id : ''))->withSuccess($message);
-            } else {
-                return redirect()->back()->withSuccess($message);
-            }
-            
+        }
+
+        $message = "Группа была успешно сохранена!";
+
+        if (Arr::get($_REQUEST, 'apply') > 0) {
+            return redirect()->to(ShopController::$path . ($shopGroup->parent_id > 0 ? '?parent_id=' . $shopGroup->parent_id : ''))->withSuccess($message);
         } else {
-            return redirect()->back()->withError("Заполните поле path!");
-        } 
+            return redirect()->back()->withSuccess($message);
+        }
+            
     }
 
 
@@ -176,8 +179,6 @@ class ShopGroupController extends Controller
 
             return $aResult;
         }
-
-        dd($aResult);
 
         return $aResult;
     }

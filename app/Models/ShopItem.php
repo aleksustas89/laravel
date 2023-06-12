@@ -44,7 +44,7 @@ class ShopItem extends Model
     public function url()
     {
 
-        return Shop::path() . $this->ShopGroup->path() . $this->path;
+        return Shop::path() . ($this->shop_group_id > 0 ? $this->ShopGroup->path() : '') . $this->path;
     }
 
     public function delete()

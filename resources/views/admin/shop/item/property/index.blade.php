@@ -21,17 +21,37 @@
 @endsection
 
 @section('content')
+
+@if (session('success'))
+    <div class="alert alert-success border-0" role="alert">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger border-0" role="alert">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="row">
     <div class="col-12">
 
         <div class="card">
+
+            <div class="card-header">
+                <a href="{{ route('shopItemProperty.create') }}" class="btn btn-success"><i class="fas fa-plus icon-separator"></i>Добавить</a>
+
+                <a href="{{ route('shopItemList.index') }}" class="btn btn-primary"><i class="fas fa-list-ul icon-separator"></i>Списки</a>
+            </div>
+
+
             <div class="card-body p-0">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th style="width: 1%">#ID</th>
                             <th>Название</th>
-                            <th>Тэг</th>
                             <th>Тип</th>
                             <th class="controll-td"></th>
                         </tr>
@@ -47,10 +67,11 @@
                                 {{ $property->name }}
                             </td>
                             <td>
-                                {{ $property->tag_name }}
-                            </td>
-                            <td>
-                                {{ $property->type }}
+                                
+                                @if (isset($types[$property->type]))
+                                    {{ $types[$property->type] }}
+                                @endif
+
                             </td>
 
                             <td class="td-actions">

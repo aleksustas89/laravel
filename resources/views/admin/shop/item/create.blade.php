@@ -21,6 +21,18 @@
 
 @section('content')
 
+@if (session('success'))
+    <div class="alert alert-success border-0" role="alert">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger border-0" role="alert">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="row">
     <div class="col-12">
 
@@ -40,6 +52,9 @@
                         <li class="nav-item"><a class="nav-link" href="#images" data-bs-toggle="tab" role="tab">Изображения</a></li>
                         <li class="nav-item"><a class="nav-link" href="#description" data-bs-toggle="tab" role="tab">Описание</a></li>
                         <li class="nav-item"><a class="nav-link" href="#seo" data-bs-toggle="tab" role="tab">SEO</a></li>
+                        @if (count($properties) > 0)
+                            <li class="nav-item"><a class="nav-link" href="#properties" data-bs-toggle="tab" role="tab">Свойства</a></li>
+                        @endif
                     </ul>
                 </div>
 
@@ -70,7 +85,7 @@
                                 </div>
                                 <div class="col-3">
                                     <label class="mb-1">Путь</label>
-                                    <input type="text" name="path" class="form-control" placeholder="Путь" data-min="2"  data-max="255" data-required="1">
+                                    <input type="text" name="path" class="form-control" placeholder="Путь" >
                                 </div>
                                 <div class="col-3 d-flex align-items-end">
 
@@ -185,6 +200,125 @@
                             </div>
                         </div>
 
+                        @if (count($properties) > 0)
+
+                            <div class="tab-pane properties-block" id="properties">
+                                @foreach ($properties as $property)
+
+                                    @switch($property->type)
+                                        @case(0)
+               
+                                            <div class="list-group-item">
+                                                <div class="row mb-3 admin-item-property">
+                                                    <div class="col-10">
+                                                        <label class="mb-1">{{ $property->name }}</label>
+                                                        <input type="text" data-name="property_{{ $property->id }}[]" name="property_{{ $property->id }}[]" class="form-control" placeholder="{{ $property->name }}">
+                                                    </div>
+    
+                                                    @if ($property->multiple == 1)
+                                                        <div class="col-2 d-flex align-items-end">
+                                                            <div>
+                                                                <button type="button" class="btn-upload btn btn-warning mt-1" onclick="adminProperty.copy($(this))"><i class="la la-plus"></i></button>
+                                                                <button type="button" class="btn-upload btn btn-danger mt-1 delete-property" onclick="adminProperty.delete($(this))"><i class="la la-minus"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                        @break
+                                        @case(1)
+
+                                            <div class="list-group-item">
+                                                <div class="row mb-3 admin-item-property">
+                                                    <div class="col-10">
+                                                        <label class="mb-1">{{ $property->name }}</label>
+                                                        <input type="text" data-name="property_{{ $property->id }}[]" name="property_{{ $property->id }}[]" class="form-control" placeholder="{{ $property->name }}">
+                                                    </div>
+    
+                                                    @if ($property->multiple == 1)
+                                                        <div class="col-2 d-flex align-items-end">
+                                                            <div>
+                                                                <button type="button" class="btn-upload btn btn-warning mt-1" onclick="adminProperty.copy($(this))"><i class="la la-plus"></i></button>
+                                                                <button type="button" class="btn-upload btn btn-danger mt-1 delete-property" onclick="adminProperty.delete($(this))"><i class="la la-minus"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            
+                                        @break
+                                        @case(2)
+
+                                            <div class="list-group-item">
+                                                <div class="row mb-3 admin-item-property">
+                                                    <div class="col-10">
+                                                        <label class="mb-1">{{ $property->name }}</label>
+                                                        <input data-required="1" data-name="property_{{ $property->id }}[]" data-reg="^[-+]?[0-9]{1,}\.{0,1}[0-9]*$" type="text" id="property_{{ $property->id }}" name="property_{{ $property->id }}[]" class="form-control" placeholder="{{ $property->name }}">
+                                                        <div id="property_{{ $property->id }}_error" class="fieldcheck-error"></div>
+                                                    </div>
+    
+                                                    @if ($property->multiple == 1)
+                                                        <div class="col-2 d-flex align-items-end">
+                                                            <div>
+                                                                <button type="button" class="btn-upload btn btn-warning mt-1" onclick="adminProperty.copy($(this))"><i class="la la-plus"></i></button>
+                                                                <button type="button" class="btn-upload btn btn-danger mt-1 delete-property" onclick="adminProperty.delete($(this))"><i class="la la-minus"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        
+                                        @break
+                                        @case(3)
+
+                                            <div class="list-group-item">
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                        <div class="form-check form-switch form-switch-success">
+                                                            <input class="form-check-input" name="property_{{ $property->id }}" type="checkbox" id="property_{{ $property->id }}">
+                                                            <label class="form-check-label" for="property_{{ $property->id }}">{{ $property->name }}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        @break
+                                        @case(4)
+                                            @if (isset($lists[$property->shop_item_list_id]))
+                                                <div class="list-group-item">
+                                                    <div class="row mb-3 admin-item-property">
+                                                        <div class="col-10">
+                                                            <label class="mb-1">{{ $property->name }}</label>
+                                                            <select data-name="property_{{ $property->id }}[]" name="property_{{ $property->id }}[]" class="form-select">
+                                                                <option value="">...</option>
+                                                                @foreach ($lists[$property->shop_item_list_id] as $key => $listItem)
+                                                                    <option value="{{ $key }}">{{ $listItem }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        @if ($property->multiple == 1)
+                                                            <div class="col-2 d-flex align-items-end">
+                                                                <div>
+                                                                    <button type="button" class="btn-upload btn btn-warning mt-1" onclick="adminProperty.copy($(this))"><i class="la la-plus"></i></button>
+                                                                    <button type="button" class="btn-upload btn btn-danger mt-1 delete-property"  onclick="adminProperty.delete($(this))"><i class="la la-minus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                            @endif
+                                        @break
+                                        @default
+                                            
+                                    @endswitch
+
+                                @endforeach
+                            </div>
+
+                        @endif
+
                     </div>
                     <div class="card-footer">
                         <button type="submit" name="save" value="0" class="btn btn-primary">Сохранить</button>
@@ -199,6 +333,7 @@
 </div>
 
 <script src="/assets/image.js"></script>
+<script src="/assets//js/pages/shopItem.js"></script>
 <script src="/assets/pages/file-upload.init.js"></script>
     
 @endsection

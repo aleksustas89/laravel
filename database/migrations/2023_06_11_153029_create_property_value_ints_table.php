@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('properties', function (Blueprint $table) {
+        Schema::create('property_value_ints', function (Blueprint $table) {
             $table->id();
+            $table->integer('property_id')->index();
+            $table->integer('entity_id')->index();
+            $table->integer('value')->index();
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('properties');
+        Schema::dropIfExists('property_value_ints');
     }
 };

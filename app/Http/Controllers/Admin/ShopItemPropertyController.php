@@ -4,19 +4,25 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShopItemProperty;
+use App\Models\ShopItemList;
 use Illuminate\Http\Request;
+use App\Models\ShopGroup;
+use App\Models\ShopItemPropertyForGroup;
 
 class ShopItemPropertyController extends Controller
 {
+
+    public static $path = '/admin/shopItemProperty/'; 
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         return view('admin.shop.item.property.index', [
-            'breadcrumbs' => [],
-            'properties' => ShopItemProperty::get()
-
+            'breadcrumbs' => self::breadcrumbs(),
+            'properties' => ShopItemProperty::get(),
+            'types' => ShopItemProperty::types(),
 
         ]);
     }
@@ -26,7 +32,12 @@ class ShopItemPropertyController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.shop.item.property.create', [
+            "breadcrumbs" => self::breadcrumbs(true),
+            'types' => ShopItemProperty::types(),
+            'lists' => ShopItemList::get(),
+            'groups' => ShopGroup::get(),
+        ]);
     }
 
     /**
@@ -34,15 +45,7 @@ class ShopItemPropertyController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(ShopItemProperty $shopItemProperty)
-    {
-        //
+        return $this->saveShopItemProperty($request);
     }
 
     /**
@@ -50,7 +53,17 @@ class ShopItemPropertyController extends Controller
      */
     public function edit(ShopItemProperty $shopItemProperty)
     {
-        //
+
+        $ShopItemPropertyForGroup = new ShopItemPropertyForGroup();
+
+        return view('admin.shop.item.property.edit', [
+            'property' => $shopItemProperty,
+            "breadcrumbs" => self::breadcrumbs(true),
+            'types' => ShopItemProperty::types(),
+            'lists' => ShopItemList::get(),
+            'groups' => ShopGroup::get(),
+            'properties_for_groups' => $ShopItemPropertyForGroup->getGroupsForProperty($shopItemProperty),
+        ]);
     }
 
     /**
@@ -58,7 +71,8 @@ class ShopItemPropertyController extends Controller
      */
     public function update(Request $request, ShopItemProperty $shopItemProperty)
     {
-        //
+
+        return $this->saveShopItemProperty($request, $shopItemProperty);
     }
 
     /**
@@ -66,6 +80,55 @@ class ShopItemPropertyController extends Controller
      */
     public function destroy(ShopItemProperty $shopItemProperty)
     {
-        //
+        $shopItemProperty->delete();
+
+        return redirect()->back()->withSuccess("Свойство было успешно удалено!");
+    }
+
+    public function saveShopItemProperty(Request $request, $shopItemProperty = false)
+    {
+
+        if (!$shopItemProperty) {
+            $shopItemProperty = new ShopItemProperty();
+        }
+
+        $shopItemProperty->name = $request->name;
+        $shopItemProperty->type = $request->type;
+        $shopItemProperty->multiple = $request->multiple == 'on' ? 1 : 0;
+        $shopItemProperty->shop_item_list_id = $request->type == 4 ? $request->shop_item_list_id : 0;
+        $shopItemProperty->sorting = $request->sorting ?? 0;
+        $shopItemProperty->save();
+
+        //доступность в группах
+        ShopItemPropertyForGroup::where('shop_item_property_id', $shopItemProperty->id)->delete();
+
+        if (!is_null($request->property_for_group)) {
+
+            foreach ($request->property_for_group as $value) {
+                $ShopItemPropertyForGroup = new ShopItemPropertyForGroup();
+                $ShopItemPropertyForGroup->shop_group_id = $value;
+                $ShopItemPropertyForGroup->shop_item_property_id = $shopItemProperty->id;
+                $ShopItemPropertyForGroup->save();
+            }
+        }
+
+        $message = "Свойство было успешно сохранено!";
+
+        if ($request->apply) {
+            return redirect()->to(self::$path)->withSuccess($message);
+        } else {
+           return redirect()->back()->withSuccess($message);
+        }
+
+    }
+
+    public static function breadcrumbs($lastItemIsLink = false)
+    {
+        $aResult[1]["name"] = 'Свойства товаров';
+        if ($lastItemIsLink) {
+            $aResult[1]["url"] = self::$path;
+        }
+
+        return ShopController::breadcrumbs() + $aResult;
     }
 }

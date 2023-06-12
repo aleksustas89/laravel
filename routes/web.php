@@ -10,11 +10,14 @@ use App\Http\Controllers\Admin\ShopController;
 use App\Http\Controllers\Admin\ShopGroupController;
 use App\Http\Controllers\Admin\ShopItemController;
 use App\Http\Controllers\Admin\ShopItemPropertyController;
+use App\Http\Controllers\Admin\ShopItemListController;
+use App\Http\Controllers\Admin\ShopItemListItemController;
 use App\Http\Controllers\Admin\ShopCurrencyController;
 use App\Models\Shop;
 use App\Models\ShopGroup;
 use App\Models\ShopItem;
 use Illuminate\Support\Facades\Schema;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,18 +39,20 @@ Route::group(['middleware' => ['auth_force_unactive', 'auth'], 'namespace' => 'A
     Route::middleware(['role:user'])->prefix('admin')->group(function() {
         Route::get('/', [App\Http\Controllers\Admin\HomeController::class, 'index'])->name('homeAdmin');
         Route::resource('structure', StructureController::class);
-        Route::resource('siteuser',  SiteuserController::class);
-        Route::resource('user',  UserController::class);
-        Route::resource('shop',  ShopController::class);
-        Route::resource('shopGroup',  ShopGroupController::class);
-        Route::resource('shopCurrency',  ShopCurrencyController::class);
-        Route::resource('shopItem',  ShopItemController::class);
-        Route::resource('shopItemProperty',  ShopItemPropertyController::class);
+        Route::resource('siteuser', SiteuserController::class);
+        Route::resource('user', UserController::class);
+        Route::resource('shop', ShopController::class);
+        Route::resource('shopGroup', ShopGroupController::class);
+        Route::resource('shopCurrency', ShopCurrencyController::class);
+        Route::resource('shopItem', ShopItemController::class);
+        Route::resource('shopItemProperty', ShopItemPropertyController::class);
+        Route::resource('shopItemList', ShopItemListController::class);
+        Route::resource('shopItemListItem', ShopItemListItemController::class);
 
         //удаление картинок
         Route::get('/shopGroup/{id}/delete/{field}', [ShopGroupController::class, 'deleteImage']);
         Route::get('/deleteShopItemImage/{id}', [ShopItemController::class, 'deleteImage']);
-
+        Route::get('/deleteShopItemPropertyValue/{property}/{id}', [ShopItemController::class, 'deletePropertyValue']);
         
 
     });
@@ -90,6 +95,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function(){
     Route::view('user/account', 'user.account');
 
 });
+
+
 
 
 

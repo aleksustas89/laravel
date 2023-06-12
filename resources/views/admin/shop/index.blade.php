@@ -42,6 +42,7 @@
                     <div class="dropdown-menu" style="">
                         <a class="dropdown-item" href="{{ route('shop.edit', 1) }}">Настройки магазина</a>
                         <a class="dropdown-item" href="{{ route('shopItemProperty.index') }}">Свойства товаров</a>
+                        <a class="dropdown-item" href="{{ route('shopItemList.index') }}">Списки</a>
                     </div>
 
                 </div>

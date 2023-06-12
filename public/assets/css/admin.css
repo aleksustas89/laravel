@@ -111,3 +111,12 @@
     margin-right: 6px;
     font-size: 12px;
 }
+
+.properties-block .list-group-item:nth-child(2n) {
+    color: #277a82;
+    background-color: #d9f5f7;
+}
+
+.properties-block .list-group-item .admin-item-property:first-child .delete-property{
+    display: none;
+}

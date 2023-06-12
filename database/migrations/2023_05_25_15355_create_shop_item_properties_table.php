@@ -15,8 +15,9 @@ return new class extends Migration
             Schema::create('shop_item_properties', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
-                $table->string('tag_name');
                 $table->integer('type');
+                $table->tinyInteger('multiple')->default(0);
+                $table->integer('shop_item_list_id')->default(0)->index();
                 $table->integer('sorting')->default(0);
                 $table->timestamps();
             });

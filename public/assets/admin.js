@@ -56,7 +56,7 @@ $(document).ready(function () {
     }
 
 });
-   
+
 function elFinderBrowser (callback, value, meta) {
     tinymce.activeEditor.windowManager.openUrl({
         title: 'File Manager',
@@ -103,7 +103,7 @@ i18n['some_letter2'] = 'символа';
 i18n['some_letter1'] = 'символов';
 i18n['current_length'] = 'Текущая длина';
 i18n['Maximum'] = 'Максимум';
-i18n['wrong_value_format'] = 'Неверный формат';
+i18n['wrong_value_format'] = 'Значение поля не соответствует формату.';
 i18n['different_fields_value'] = 'Введенные пароли не совпадают.';
 
 function fieldChecker()
@@ -120,7 +120,8 @@ function fieldChecker()
 			minlength = $object.data('min'),
 			maxlength = $object.data('max'),
 			reg = $object.data('reg'),
-			equality = $object.data('equality');
+			equality = $object.data('equality'),
+			required = $object.data('required');
 
 		// Проверка на минимальную длину
 		if (typeof minlength != 'undefined' && minlength && value.length < minlength)
@@ -172,7 +173,7 @@ function fieldChecker()
 		// Проверка на select
 		var type = $object.get(0).tagName;
 
-		if (typeof type != 'undefined' && type.toLowerCase() == 'select')
+		if (typeof type != 'undefined' && type.toLowerCase() == 'select' && typeof required != 'undefined' )
 		{
 			if (value <= 0)
 			{
