@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ShopItemPropertyController;
 use App\Http\Controllers\Admin\ShopItemListController;
 use App\Http\Controllers\Admin\ShopItemListItemController;
 use App\Http\Controllers\Admin\ShopCurrencyController;
+use App\Http\Controllers\Admin\StructureMenuController;
 use App\Models\Shop;
 use App\Models\ShopGroup;
 use App\Models\ShopItem;
@@ -48,10 +49,12 @@ Route::group(['middleware' => ['auth_force_unactive', 'auth'], 'namespace' => 'A
         Route::resource('shopItemProperty', ShopItemPropertyController::class);
         Route::resource('shopItemList', ShopItemListController::class);
         Route::resource('shopItemListItem', ShopItemListItemController::class);
+        Route::resource('structureMenu', StructureMenuController::class);
 
         //удаление картинок
         Route::get('/shopGroup/{id}/delete/{field}', [ShopGroupController::class, 'deleteImage']);
         Route::get('/deleteShopItemImage/{id}', [ShopItemController::class, 'deleteImage']);
+        //удаление свойств
         Route::get('/deleteShopItemPropertyValue/{property}/{id}', [ShopItemController::class, 'deletePropertyValue']);
         
 

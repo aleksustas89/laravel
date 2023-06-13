@@ -15,6 +15,7 @@ return new class extends Migration
             Schema::create('structures', function (Blueprint $table) {
                 $table->id();
                 $table->integer('parent_id')->default(0);
+                $table->integer('structure_menu_id')->default(0)->nullable();
                 $table->string('name')->nullable();
                 $table->text('text')->nullable();
                 $table->string('seo_title')->nullable();

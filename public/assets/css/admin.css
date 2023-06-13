@@ -120,3 +120,7 @@
 .properties-block .list-group-item .admin-item-property:first-child .delete-property{
     display: none;
 }
+
+.structure_menu_select {
+    height: 44px;
+}

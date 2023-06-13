@@ -33,7 +33,8 @@
             <div class="card">
 
                 <div class="card-header">
-                    <a href="{{ $create }}" class="btn btn-success">Добавить</a>
+                    <a href="{{ $create }}" class="btn btn-success"><i class="fas fa-plus icon-separator"></i>Добавить</a>
+                    <a href="{{ route('structureMenu.index') }}" class="btn btn-info"><i class="fas fa-bars icon-separator"></i>Меню</a>
                 </div>
 
                 <div class="card-body">
@@ -44,6 +45,7 @@
                                     <th style="width: 1%">#ID</th>
                                     <th>Название структуры</th>
                                     <th>Путь</th>
+                                    <th width="200px">Меню</th>
                                     <th width="40px">
                                         <i data-feather="eye" title="Активность"></i>
                                     </th>
@@ -70,6 +72,9 @@
                                     </td>
                                     <td>
                                         <a target="_blank" href="{{ $structure['url'] }}">{{ $structure['url'] }}</a>
+                                    </td>
+                                    <td>
+                                        {{ $structure['menu_name'] }}
                                     </td>
                                     <td>
                                         @if ($structure['active'] == 1)

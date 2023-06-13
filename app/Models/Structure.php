@@ -9,6 +9,11 @@ class Structure extends Model
 {
     use HasFactory;
 
+    public function StructureMenu()
+    {
+        return $this->belongsTo(StructureMenu::class);
+    }
+
     public function getPath($aResult = array(), $activeAll = true)
     {
         

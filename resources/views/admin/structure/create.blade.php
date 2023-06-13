@@ -59,10 +59,21 @@
 
                         <div class="tab-pane active" id="main">
 
-                            <div class="mb-3">
-                                <label for="name" class="mb-1">Название структуры</label>
-                                <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Название структуры" data-required="1" data-min="2" data-max="255">
-                                <div id="name_error" class="fieldcheck-error"></div>
+                            <div class="row mb-3">
+                                <div class="col-lg-9">
+                                    <label for="name" class="mb-1">Название структуры</label>
+                                    <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Название структуры" value="" data-required="1">
+                                    <div id="name_error" class="fieldcheck-error"></div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="name" class="mb-1">Меню</label>
+                                    <select name="structure_menu_id" class="form-select structure_menu_select">
+                                        <option value="">...</option>
+                                        @foreach ($menus as $menu)
+                                            <option value="{{ $menu->id }}">{{ $menu->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="row mb-3">
